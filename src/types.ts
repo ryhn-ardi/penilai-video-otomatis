@@ -38,6 +38,8 @@ export interface StudentVlogEntry {
   // Video meta info
   presentationPace?: string;
   estimatedDuration?: string;
+  qualityAssessment?: 'poor' | 'fair' | 'good' | 'excellent';
+  detectedIssues?: string[];
   evaluatedAt?: string;
   errorMessage?: string;
 }
@@ -52,6 +54,7 @@ export interface AssignmentSettings {
   weights: RubricWeights;
   targetDuration: string;
   instructions: string;
+  strictnessMode: 'strict' | 'standard' | 'lenient'; // default 'strict'
 }
 
 export interface FilterState {

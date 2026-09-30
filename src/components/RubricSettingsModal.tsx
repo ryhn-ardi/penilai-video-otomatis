@@ -21,6 +21,7 @@ export const RubricSettingsModal: React.FC<RubricSettingsModalProps> = ({
   const [passingGrade, setPassingGrade] = useState(settings.passingGrade);
   const [weights, setWeights] = useState<RubricWeights>({ ...settings.weights });
   const [instructions, setInstructions] = useState(settings.instructions || '');
+  const [strictnessMode, setStrictnessMode] = useState<'strict' | 'standard' | 'lenient'>(settings.strictnessMode || 'strict');
 
   const totalWeight = weights.creativity + weights.audio + weights.visual + weights.theme;
   const isWeightValid = totalWeight === 100;
@@ -46,6 +47,7 @@ export const RubricSettingsModal: React.FC<RubricSettingsModalProps> = ({
       weights,
       targetDuration: settings.targetDuration,
       instructions,
+      strictnessMode,
     });
 
     onClose();
@@ -251,7 +253,81 @@ export const RubricSettingsModal: React.FC<RubricSettingsModalProps> = ({
             </div>
           </div>
 
-          {/* Section 3: Instruksi Khusus Guru */}
+          {/* Section 3: Tingkat Ketat Penilaian */}
+          <div className="pt-3 border-t border-slate-200 space-y-2">
+            <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider text-indigo-700">
+              Tingkat Ketat & Objektivitas Penilaian AI
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <label
+                className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                  strictnessMode === 'strict'
+                    ? 'border-rose-500 bg-rose-50/60 ring-1 ring-rose-500 text-rose-950 font-medium'
+                    : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                }`}
+              >
+                <div className="flex items-center gap-1.5 mb-1">
+                  <input
+                    type="radio"
+                    name="strictness"
+                    checked={strictnessMode === 'strict'}
+                    onChange={() => setStrictnessMode('strict')}
+                    className="text-rose-600 focus:ring-rose-500"
+                  />
+                  <span className="font-bold text-xs text-rose-800">🔴 Kritis & Tegas (Rekomendasi)</span>
+                </div>
+                <p className="text-[10px] text-slate-500">
+                  Jika video jelek/buram/asal-asalan, nilai langsung 30–55 (Grade D). Sangat objektif.
+                </p>
+              </label>
+
+              <label
+                className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                  strictnessMode === 'standard'
+                    ? 'border-indigo-500 bg-indigo-50/60 ring-1 ring-indigo-500 text-indigo-950 font-medium'
+                    : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                }`}
+              >
+                <div className="flex items-center gap-1.5 mb-1">
+                  <input
+                    type="radio"
+                    name="strictness"
+                    checked={strictnessMode === 'standard'}
+                    onChange={() => setStrictnessMode('standard')}
+                    className="text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <span className="font-bold text-xs text-indigo-800">🔵 Standar Objektif</span>
+                </div>
+                <p className="text-[10px] text-slate-500">
+                  Penilaian seimbang sesuai kriteria umum Kurikulum Merdeka.
+                </p>
+              </label>
+
+              <label
+                className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                  strictnessMode === 'lenient'
+                    ? 'border-emerald-500 bg-emerald-50/60 ring-1 ring-emerald-500 text-emerald-950 font-medium'
+                    : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                }`}
+              >
+                <div className="flex items-center gap-1.5 mb-1">
+                  <input
+                    type="radio"
+                    name="strictness"
+                    checked={strictnessMode === 'lenient'}
+                    onChange={() => setStrictnessMode('lenient')}
+                    className="text-emerald-600 focus:ring-emerald-500"
+                  />
+                  <span className="font-bold text-xs text-emerald-800">🟢 Toleran / Pemula</span>
+                </div>
+                <p className="text-[10px] text-slate-500">
+                  Penilaian apresiatif untuk tahap pengenalan video awal.
+                </p>
+              </label>
+            </div>
+          </div>
+
+          {/* Section 4: Instruksi Khusus Guru */}
           <div className="pt-3 border-t border-slate-200 space-y-1">
             <label className="font-bold text-slate-700 block">Instruksi Khusus untuk Evaluasi AI (Opsional)</label>
             <textarea

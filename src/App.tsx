@@ -161,7 +161,13 @@ export default function App() {
           student.videoTitle,
           settings.theme,
           settings.weights,
-          settings.passingGrade
+          settings.passingGrade,
+          {
+            qualityAssessment: student.qualityAssessment,
+            detectedIssues: student.detectedIssues,
+            teacherNotes: student.teacherManualComment || student.videoTitle,
+            strictnessMode: settings.strictnessMode,
+          }
         );
       }
 

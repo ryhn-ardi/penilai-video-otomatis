@@ -15,6 +15,7 @@ export const defaultSettings: AssignmentSettings = {
   },
   targetDuration: '3 - 7 Menit',
   instructions: 'Vlog harus orisinal, memuat pembuka, isi penjelasan kearifan lokal/sains, wawancara/observasi nyata, dan pesan kesimpulan edukatif.',
+  strictnessMode: 'strict',
 };
 
 export const sampleStudents: StudentVlogEntry[] = [

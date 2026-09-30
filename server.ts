@@ -165,30 +165,25 @@ app.post('/api/evaluate-vlog', async (req, res) => {
     if (ai) {
       try {
         const prompt = `Anda adalah seorang Penilai Ahli Video & Pendidik Multimedia Profesional untuk evaluasi tugas vlog siswa sekolah (SMP/SMA/SMK/Universitas).
-Lakukan penilaian komprehensif, objektif, adil, dan konstruktif terhadap video vlog siswa berikut:
+Lakukan penilaian secara KRITIS, TEGAS, OBJEKTIF, dan TIDAK MEMANIPULASI NILAI terhadap video vlog siswa berikut:
 
 DETAIL SISWA & TUGAS:
 - Nama Siswa: ${studentName}
 - Kelas: ${className || 'Umum'}
 - Link Video Vlog: ${videoUrl}
-- Judul Video (jika ada): ${videoTitle || 'Vlog Tugas Siswa'}
-- Tema Tugas yang Ditentukan: "${theme}"
+- Judul Video: ${videoTitle || 'Vlog Siswa'}
+- Tema Tugas: "${theme}"
 - Kriteria Bobot: Kreativitas (${rubricWeights.creativity}%), Kualitas Audio (${rubricWeights.audio}%), Kejernihan Visual (${rubricWeights.visual}%), Kesesuaian Tema (${rubricWeights.theme}%)
 - Standar KKM / Kelulusan: ${passingGrade}
-- Instruksi Khusus Guru: ${customInstructions || 'Nilai secara teliti berdasarkan rubrik edukasi.'}
+- Instruksi & Catatan Guru: ${customInstructions || 'Nilai secara tegas dan objektif.'}
 
-RUBRIK PENILAIAN OBJEKTIF:
-1. KREATIVITAS & ORISINALITAS (Skala 0-100):
-   - Alur narasi, storytelling, keunikan sudut pandang, variasi shot, transisi, pemilihan efek/musik latar, serta daya tarik pembuka (hook) dan penutup.
-2. KUALITAS AUDIO (Skala 0-100):
-   - Kejernihan artikulasi suara/vokal, volume seimbang (tidak terlalu kecil/pecah), keseimbangan backsound dengan suara pembicara, minim noise angin/ruangan.
-3. KEJERNIHAN VISUAL & TEKNIS (Skala 0-100):
-   - Ketajaman gambar/resolusi, kestabilan kamera (framing yang rapi, tidak goyang ekstrem), pencahayaan (lighting) yang cukup dan tidak backlight, konsistensi warna.
-4. KESESUAIAN DENGAN TEMA & KONTEN (Skala 0-100):
-   - Relevansi materi dengan tema "${theme}", kedalaman pesan yang disampaikan, akurasi informasi, kelengkapan struktur vlog (intro, isi pembahasan, pesan moral/kesimpulan).
-
-Tugas Anda:
-Analisis link dan konteks vlog tersebut secara cerdas. Berikan skor angka realistis (rentang 65-98 tergantung kualitas standar siswa), ulasan positif spesifik, area perbaikan nyata, dan komentar edukatif dalam Bahasa Indonesia yang memotivasi siswa.`;
+PRINSIP PENILAIAN OBJEKTIF & TEGAS:
+- JANGAN PERNAH memberikan nilai tinggi jika kualitas video buruk atau dibuat asal-asalan. JANGAN memberikan nilai kasihan.
+- SKALA NILAI MENCAKUP 25 - 98:
+  * Skor 25 - 58 (Sangat Buruk / Tidak Layak / Gagal Teknis): Visual buram/pecah/gelap/backlight parah, audio kresek/noise dominan/tidak terdengar, materi asal-asalan atau tidak nyambung dengan tema.
+  * Skor 59 - 74 (Kurang Memuaskan / Remidi): Audio-visual pas-pasan, kamera goyang tanpa editing memadai, materi kurang mendalam.
+  * Skor 75 - 84 (Standar Memenuhi KKM): Audio terdengar cukup jelas, visual rapi standar HP, materi sesuai tema.
+  * Skor 85 - 98 (Sangat Bagus / Profesional): Sinematik, audio jernih profesional/clip-on, narasi memikat, materi mendalam dan edukatif.`;
 
         const response = await ai.models.generateContent({
           model: 'gemini-3.8-flash',

@@ -114,6 +114,76 @@ export const VideoEvaluationModal: React.FC<VideoEvaluationModalProps> = ({
     onClose();
   };
 
+  // Quick Quality Presets
+  const applyPresetQuality = (preset: 'poor' | 'fair' | 'good' | 'excellent') => {
+    let c = 80, a = 80, v = 80, t = 80;
+    let cFb = '', aFb = '', vFb = '', tFb = '';
+    let pace = 'Komunikatif';
+    let ovr = '';
+
+    if (preset === 'poor') {
+      c = 42; a = 38; v = 35; t = 48;
+      cFb = 'Konsep tidak terencana, tidak ada editing transisi maupun alur narasi yang jelas.';
+      aFb = 'Kualitas audio sangat buruk, artikulasi tidak jelas tertutup noise/distorsi parah.';
+      vFb = 'Resolusi gambar buram/pecah, pencahayaan sangat gelap/backlight, dan kamera goyang parah.';
+      tFb = `Pembahasan materi sangat minim dan melenceng dari tema "${settings.theme}".`;
+      pace = 'Tidak Terstruktur & Asal-asalan';
+      ovr = `Karya vlog ${formData.name} belum memenuhi standar minimum penilaian tugas (Skor: 41, Grade D). Wajib rekam ulang (remidi).`;
+    } else if (preset === 'fair') {
+      c = 68; a = 64; v = 65; t = 70;
+      cFb = 'Penyampaian cukup jelas namun transisi dan daya tarik pembuka masih monoton.';
+      aFb = 'Volume vokal terdengar namun sesekali terganggu suara latar atau musik terlalu keras.';
+      vFb = 'Pencahayaan dan resolusi pas-pasan, sudut kamera masih sering goyang.';
+      tFb = `Sudah menyentuh tema "${settings.theme}", namun data dan analisis masih dangkal.`;
+      pace = 'Cukup Monoton';
+      ovr = `Performa ${formData.name} masih membutuhkan perbaikan teknis audio dan visual (Skor: 67, Grade C).`;
+    } else if (preset === 'good') {
+      c = 82; a = 80; v = 83; t = 85;
+      cFb = 'Storytelling runtut dengan pembuka yang cukup menarik.';
+      aFb = 'Artikulasi suara vokal jelas dan keseimbangan musik latar terjaga.';
+      vFb = 'Pencahayaan alami cukup baik, resolusi gambar tajam dan framing rapi.';
+      tFb = `Materi vlog sangat selaras dengan tema "${settings.theme}".`;
+      pace = 'Santai & Komunikatif';
+      ovr = `Karya vlog yang baik dan memenuhi standar kompetensi tugas (Skor: 82, Grade B).`;
+    } else if (preset === 'excellent') {
+      c = 95; a = 93; v = 94; t = 96;
+      cFb = 'Konsep sinematik memukau dengan transisi dan motion graphic yang sangat rapi.';
+      aFb = 'Kualitas audio sangat bersih, vokal jernih layaknya presenter profesional.';
+      vFb = 'Resolusi Full HD tajam, pencahayaan dan color grading estetik.';
+      tFb = `Eksplorasi tema "${settings.theme}" luar biasa mendalam dan sarat pesan edukatif.`;
+      pace = 'Inspiratif & Sangat Percaya Diri';
+      ovr = `Karya luar biasa dari ${formData.name}! Salah satu video terbaik di kelas ini (Skor: 95, Grade A).`;
+    }
+
+    const w = settings.weights;
+    const totalW = w.creativity + w.audio + w.visual + w.theme;
+    const finalScore = Math.round((c * w.creativity + a * w.audio + v * w.visual + t * w.theme) / totalW);
+
+    let grade: 'A' | 'B' | 'C' | 'D' = 'D';
+    if (finalScore >= 88) grade = 'A';
+    else if (finalScore >= 78) grade = 'B';
+    else if (finalScore >= 65) grade = 'C';
+
+    setFormData({
+      ...formData,
+      creativityScore: c,
+      creativityFeedback: cFb,
+      audioScore: a,
+      audioFeedback: aFb,
+      visualScore: v,
+      visualFeedback: vFb,
+      themeRelevanceScore: t,
+      themeFeedback: tFb,
+      finalScore,
+      grade,
+      isPassed: finalScore >= settings.passingGrade,
+      presentationPace: pace,
+      overallComment: ovr,
+      qualityAssessment: preset,
+      status: 'evaluated',
+    });
+  };
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-fadeIn">
       <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
@@ -266,6 +336,55 @@ export const VideoEvaluationModal: React.FC<VideoEvaluationModalProps> = ({
           {/* Right Column: 4 Rubric Criteria & Feedback (7 cols) */}
           <div className="lg:col-span-7 space-y-4">
             
+            {/* Quick Diagnostic Presets */}
+            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                  <Sliders className="w-3.5 h-3.5 text-indigo-600" />
+                  Kalibrasi Cepat Kualitas Video (Preset Penilaian Tegas):
+                </span>
+                <span className="text-[11px] text-slate-400">Pilih jika ingin auto-set skor</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => applyPresetQuality('poor')}
+                  className="px-2 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-300 rounded-lg text-left transition-colors cursor-pointer"
+                  title="Gunakan jika kualitas video buram, gelap, goyang parah, audio kresek, atau asal-asalan"
+                >
+                  <span className="block text-[11px] font-bold text-rose-800 leading-tight">🔴 Sangat Buruk</span>
+                  <span className="text-[10px] text-rose-600">Skor ~41 (Grade D)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyPresetQuality('fair')}
+                  className="px-2 py-1.5 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-lg text-left transition-colors cursor-pointer"
+                  title="Gunakan jika kualitas kurang memuaskan dan perlu remidi"
+                >
+                  <span className="block text-[11px] font-bold text-amber-800 leading-tight">🟡 Kurang / Remidi</span>
+                  <span className="text-[10px] text-amber-600">Skor ~67 (Grade C)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyPresetQuality('good')}
+                  className="px-2 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-300 rounded-lg text-left transition-colors cursor-pointer"
+                  title="Gunakan untuk kualitas standar yang memenuhi KKM"
+                >
+                  <span className="block text-[11px] font-bold text-blue-800 leading-tight">🔵 Standar KKM</span>
+                  <span className="text-[10px] text-blue-600">Skor ~82 (Grade B)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyPresetQuality('excellent')}
+                  className="px-2 py-1.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-lg text-left transition-colors cursor-pointer"
+                  title="Gunakan untuk video yang sangat bagus, jernih, dan sinematik"
+                >
+                  <span className="block text-[11px] font-bold text-emerald-800 leading-tight">🟢 Sangat Bagus</span>
+                  <span className="text-[10px] text-emerald-600">Skor ~95 (Grade A)</span>
+                </button>
+              </div>
+            </div>
+
             <div className="flex items-center justify-between pb-1 border-b border-slate-200">
               <h4 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
                 <Sliders className="w-4 h-4 text-indigo-600" />
