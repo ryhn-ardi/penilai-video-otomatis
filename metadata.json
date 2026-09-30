@@ -1,0 +1,6 @@
+{
+  "name": "VlogGrader AI - Penilai Video Siswa Otomatis",
+  "description": "Platform penilaian video vlog siswa otomatis berbasis AI dengan analisis rubrik objektif, rekapitulasi data Excel/PDF, grafik performa dinamis, dan pemeringkatan kelas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
